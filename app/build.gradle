@@ -1,0 +1,118 @@
+// audience: internal
+// # integrated-app
+//
+// 集成 APK 的应用模块: 只依赖 MatrixSdk fat AAR 和项目原生扩展.
+// build.bat 通过 -P 传入应用身份与版本, 并写出 gdextensionlibs.json 指明原生库目录.
+
+import groovy.json.JsonSlurper
+
+plugins {
+    id 'com.android.application'
+}
+
+def configuredValue = { String propertyName, Object fallbackValue ->
+    def propertyValue = providers.gradleProperty(propertyName).orNull
+    return propertyValue != null && !propertyValue.toString().isEmpty() ? propertyValue : fallbackValue
+}
+def configuredApplicationId = configuredValue('export_package_name', 'com.ns.mefrost').toString()
+def configuredVersionCode = configuredValue('export_version_code', 1).toString().toInteger()
+def configuredVersionName = configuredValue('export_version_name', '1.0.0').toString()
+def configuredCompileSdk = configuredValue('export_compile_sdk', 36).toString().toInteger()
+def configuredMinSdk = configuredValue('export_min_sdk', 30).toString().toInteger()
+def configuredTargetSdk = configuredValue('export_target_sdk', configuredCompileSdk).toString().toInteger()
+def configuredAbis = configuredValue('export_enabled_abis', 'arm64-v8a').toString()
+    .split('\\|')
+    .collect { it.trim() }
+    .findAll { !it.isEmpty() }
+if (configuredAbis != ['arm64-v8a']) {
+    throw new GradleException("Only arm64-v8a is supported by the integrated package: ${configuredAbis}")
+}
+
+// 项目原生扩展的目录由 build.bat 写入清单, 与 fat AAR 自带的 Godot 库一起打包.
+def gdextensionLibRoots = []
+def manifestPath = providers.gradleProperty('matrixGdextensionManifest').orNull
+if (manifestPath != null) {
+    def manifestFile = new File(manifestPath)
+    if (!manifestFile.isFile()) {
+        throw new GradleException("Missing GDExtension dependency manifest: ${manifestFile}")
+    }
+    // 清单与 release/<abi>/ 原生库同放在 libs 下, 因此以清单所在目录为根.
+    def manifestRoot = manifestFile.parentFile
+    gdextensionLibRoots = new JsonSlurper().parse(manifestFile).collect { resourcePath ->
+        def relativePath = resourcePath.toString().replaceFirst('^res://', '')
+        def libraryFile = new File(manifestRoot, relativePath)
+        if (!libraryFile.isFile()) {
+            throw new GradleException("Missing GDExtension library: ${libraryFile}")
+        }
+        libraryFile.parentFile.parentFile
+    }.unique()
+}
+
+android {
+    namespace 'com.ns.mefrost'
+    compileSdk configuredCompileSdk
+    // 必须固定 NDK 版本: AGP 找不到 NDK 时会静默跳过 strip, 把未裁剪的引擎库打进 APK.
+    ndkVersion configuredValue('export_ndk_version', '29.0.14206865').toString()
+
+    defaultConfig {
+        applicationId configuredApplicationId
+        minSdk configuredMinSdk
+        targetSdk configuredTargetSdk
+        versionCode configuredVersionCode
+        versionName configuredVersionName
+
+        ndk {
+            abiFilters(*configuredAbis as String[])
+        }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = gdextensionLibRoots.isEmpty() ? ['src/main/jniLibs'] : gdextensionLibRoots
+        }
+    }
+
+    androidResources {
+        noCompress += ['obb']
+    }
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging true
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.debug
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+androidComponents {
+    onVariants(selector().withBuildType("debug")) { variant ->
+        variant.outputs.forEach { output ->
+            output.outputFileName.set("MEFrost.apk")
+        }
+    }
+    onVariants(selector().withBuildType("release")) { variant ->
+        variant.outputs.forEach { output ->
+            output.outputFileName.set("MEFrost.apk")
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.10.0'
+    implementation "androidx.fragment:fragment:1.8.6"
+    implementation "androidx.documentfile:documentfile:1.1.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:2.1.21"
+    // MatrixSdk fat AAR 提供引擎服务, PCK 管理, SDK 客户端和 Godot 原生库.
+    implementation fileTree(dir: file('libs'), include: ['*.aar'])
+}

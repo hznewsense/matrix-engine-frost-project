@@ -1,0 +1,19 @@
+# Gradle / Android 构建产物
+build/
+.gradle/
+local.properties
+*.iml
+.idea/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# 系统临时文件
+Thumbs.db
+.DS_Store
+*.tmp
+
+# setup.bat 解析出的本机工具链路径, 以及构建产物.
+.setup-user-env.cmd
+.build-logs/
+/Apks/

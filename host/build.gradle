@@ -1,0 +1,11 @@
+// audience: internal
+// # integrated-host-build
+//
+// 集成 APK 的 Gradle 根工程, 模块依赖在 settings.gradle 声明.
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}

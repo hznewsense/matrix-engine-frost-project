@@ -1,0 +1,28 @@
+// audience: internal
+// # integrated-host-settings
+//
+// 集成 APK 的 Gradle 根工程: 单模块, 依赖仓库内的 MatrixSdk fat AAR.
+// AGP 版本必须与 gradle-wrapper.properties 的 Gradle 版本配套 (Gradle 8.4 -> AGP 8.3.x).
+
+pluginManagement {
+    plugins {
+        id 'com.android.application' version '8.3.0'
+        id 'com.android.library' version '8.3.0'
+    }
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = 'MEFrost'
+include ':app'
+project(':app').projectDir = new File(settingsDir, '../app')
