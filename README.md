@@ -123,28 +123,29 @@ sequenceDiagram
 
 ```text
 .
-├── host/                               # Gradle 根工程
-│   ├── settings.gradle                 # 声明 :app 指向 ../app
-│   ├── build.gradle                    # 仓库配置
-│   ├── gradle.properties               # AndroidX / Jetifier / JVM 参数
-│   └── gradle/wrapper/                 # Gradle 8.4 wrapper
-│
-├── app/                                # 应用模块
-│   ├── build.gradle                    # 构建参数、jniLibs 路径、签名配置
-│   ├── proguard-rules.pro
-│   ├── libs/
-│   │   └── MatrixSdk_Integrated_1.3.1.aar    # 引擎 fat AAR（Git LFS）
-│   └── src/main/
-│       ├── AndroidManifest.xml
-│       ├── java/com/ns/mefrost/
-│       │   ├── MEFrostApplication.java
-│       │   ├── MainActivity.java
-│       │   └── BrowserActivity.java
-│       ├── res/                        # 图标、主题、布局
-│       ├── assets/game.pck             # 游戏内容包（Git LFS）
-│       └── jniLibs/arm64-v8a/
-│           ├── libMEFrost.android.template_release.arm64.so
-│           └── libzmq.so
+├── MEFrostJava/                        # Android 工程
+│   ├── host/                           # Gradle 根工程
+│   │   ├── settings.gradle             # 声明 :app 指向 ../app
+│   │   ├── build.gradle                # 仓库配置
+│   │   ├── gradle.properties           # AndroidX / Jetifier / JVM 参数
+│   │   └── gradle/wrapper/             # Gradle 8.4 wrapper
+│   │
+│   └── app/                            # 应用模块
+│       ├── build.gradle                # 构建参数、jniLibs 路径、签名配置
+│       ├── proguard-rules.pro
+│       ├── libs/
+│       │   └── MatrixSdk_Integrated_1.3.1.aar    # 引擎 fat AAR（Git LFS）
+│       └── src/main/
+│           ├── AndroidManifest.xml
+│           ├── java/com/ns/mefrost/
+│           │   ├── MEFrostApplication.java
+│           │   ├── MainActivity.java
+│           │   └── BrowserActivity.java
+│           ├── res/                    # 图标、主题、布局
+│           ├── assets/game.pck         # 游戏内容包（Git LFS）
+│           └── jniLibs/arm64-v8a/
+│               ├── libMEFrost.android.template_release.arm64.so
+│               └── libzmq.so
 │
 ├── Docs/                               # 性能数据与运行截图
 ├── Apks/                               # 构建产物输出目录
@@ -201,7 +202,8 @@ adb shell am start -W -n com.ns.mefrost/com.ns.mefrost.MainActivity
 
 ### 用 Android Studio 打开
 
-打开 `host/` 目录（不是仓库根目录）——`settings.gradle` 用相对路径把 `../app` 注册为 `:app` 模块。
+打开 `MEFrostJava/host/` 目录（不是仓库根目录）——`settings.gradle` 用相对路径把 `../app` 注册为
+`:app` 模块。
 
 ---
 
@@ -244,7 +246,7 @@ adb shell am start -W -n com.ns.mefrost/com.ns.mefrost.MainActivity
 
 默认应用 ID 为 `com.ns.mefrost`，入口 Activity 为 `com.ns.mefrost.MainActivity`。
 
-`app/build.gradle` 的所有构建参数都可以用 `-P` 覆盖：
+`MEFrostJava/app/build.gradle` 的所有构建参数都可以用 `-P` 覆盖：
 
 | 属性 | 默认值 |
 | --- | --- |
@@ -259,11 +261,11 @@ adb shell am start -W -n com.ns.mefrost/com.ns.mefrost.MainActivity
 
 品牌化替换清单：
 
-1. `export_package_name` 与 `app/build.gradle` 的 `namespace` 同步修改；
+1. `export_package_name` 与 `MEFrostJava/app/build.gradle` 的 `namespace` 同步修改；
 2. `AndroidManifest.xml` 中 `<queries>` 的包名同步修改；
 3. 替换 `res/drawable/icon_hmi.png` 与 `mipmap-*` 下的启动图标；
 4. 替换 `res/values/strings.xml` 中的 `app_name`；
-5. 替换 `app/libs/MatrixSdk_Integrated_*.aar` 与 `jniLibs/` 下的业务 `.so`；
+5. 替换 `MEFrostJava/app/libs/MatrixSdk_Integrated_*.aar` 与 `jniLibs/` 下的业务 `.so`；
 6. 用自研内容替换 `assets/game.pck`。
 
 ---
@@ -272,14 +274,14 @@ adb shell am start -W -n com.ns.mefrost/com.ns.mefrost.MainActivity
 
 ### 内容侧
 
-`game.pck` 由 Matrix Engine 编辑器导出。替换内容后重新导出并覆盖 `app/src/main/assets/game.pck`
-即可，无需改动 Java 侧代码。
+`game.pck` 由 Matrix Engine 编辑器导出。替换内容后重新导出并覆盖
+`MEFrostJava/app/src/main/assets/game.pck` 即可，无需改动 Java 侧代码。
 
 ### 原生扩展侧
 
-`jniLibs/arm64-v8a/libMEFrost.android.template_release.arm64.so` 是项目的 GDExtension 扩展。
-重新编译后覆盖该文件即可；引擎侧的依赖（`libgodot_android.so`、`libc++_shared.so`）由 AAR 提供，
-`libzmq.so` 为业务通信依赖，也需要一并更新。
+`MEFrostJava/app/src/main/jniLibs/arm64-v8a/libMEFrost.android.template_release.arm64.so` 是项目的
+GDExtension 扩展。重新编译后覆盖该文件即可；引擎侧的依赖（`libgodot_android.so`、`libc++_shared.so`）
+由 AAR 提供，`libzmq.so` 为业务通信依赖，也需要一并更新。
 
 ### Java 侧
 

@@ -14,7 +14,7 @@ set "COLOR_YELLOW=%ESC%[93m"
 set "COLOR_GREEN=%ESC%[92m"
 set "COLOR_CYAN=%ESC%[96m"
 
-REM ---------- Product identity (与 app/build.gradle 的默认值一致) ----------
+REM ---------- Product identity (与 MEFrostJava/app/build.gradle 的默认值一致) ----------
 set "PRODUCT_NAME=MEFrost"
 set "APPLICATION_ID=com.ns.mefrost"
 set "VERSION_NAME=1.0.0"
@@ -29,8 +29,9 @@ set "APK_VARIANT=release"
 REM ---------- Paths ----------
 set "REPO_ROOT=%~dp0"
 if "%REPO_ROOT:~-1%"=="\" set "REPO_ROOT=%REPO_ROOT:~0,-1%"
-set "HOST_DIR=%REPO_ROOT%\host"
-set "APP_DIR=%REPO_ROOT%\app"
+set "ANDROID_DIR=%REPO_ROOT%\MEFrostJava"
+set "HOST_DIR=%ANDROID_DIR%\host"
+set "APP_DIR=%ANDROID_DIR%\app"
 set "WRAPPER_JAR=%HOST_DIR%\gradle\wrapper\gradle-wrapper.jar"
 set "APKS_DIR=%REPO_ROOT%\Apks"
 set "LOG_DIR=%REPO_ROOT%\.build-logs"
@@ -320,7 +321,7 @@ exit /b 1
 :verify_apk_payload_ok
 if %~2 GTR 52428800 exit /b 0
 call :log_error "APK is only %~2 bytes -- game.pck or the native libraries are missing."
-call :log_error "Check app/src/main/assets/game.pck and app/src/main/jniLibs/arm64-v8a."
+call :log_error "Check MEFrostJava/app/src/main/assets/game.pck and MEFrostJava/app/src/main/jniLibs/arm64-v8a."
 exit /b 1
 
 :copy_file_retry
