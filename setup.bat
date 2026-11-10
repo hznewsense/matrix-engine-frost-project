@@ -164,8 +164,8 @@ if not exist "%APP_DIR%\libs\MatrixSdk_Integrated_*.aar" (
     call :log_error "Expected MatrixSdk_Integrated_<version>.aar (about 22 MB)."
     exit /b 1
 )
-if not exist "%APP_DIR%\src\main\assets\game.pck" (
-    call :log_error "game.pck not found: %APP_DIR%\src\main\assets\game.pck"
+if not exist "%APP_DIR%\src\main\assets\frost.pck" (
+    call :log_error "frost.pck not found: %APP_DIR%\src\main\assets\frost.pck"
     call :log_error "It is stored with Git LFS. Restore it with: git lfs pull"
     exit /b 1
 )
@@ -177,7 +177,7 @@ if not exist "%APP_DIR%\src\main\jniLibs\arm64-v8a\libzmq.so" (
     call :log_error "libzmq.so not found under: %APP_DIR%\src\main\jniLibs\arm64-v8a"
     exit /b 1
 )
-call :log_ok "Bundled AAR, game.pck and native libraries are ready"
+call :log_ok "Bundled AAR, frost.pck and native libraries are ready"
 exit /b 0
 
 REM ---------- Host Gradle ----------

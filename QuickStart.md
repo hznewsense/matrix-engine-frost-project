@@ -54,7 +54,7 @@ adb shell am start -W -n com.ns.mefrost/com.ns.mefrost.MainActivity
 
 ### 1.1 必须先拉 LFS 对象
 
-`game.pck`（约 177 MB）超过 GitHub 单文件 100 MB 限制；引擎 fat AAR 也会随版本整体替换。
+`frost.pck`（约 177 MB）超过 GitHub 单文件 100 MB 限制；引擎 fat AAR 也会随版本整体替换。
 两者都通过 Git LFS 存储，克隆后如果只是占位符，`setup.bat` 会直接报错：
 
 ```bat
@@ -64,7 +64,7 @@ git lfs pull
 
 | 文件 | 大小 | 存储方式 |
 | --- | --- | --- |
-| `MEFrostJava/app/src/main/assets/game.pck` | 约 177 MB | Git LFS |
+| `MEFrostJava/app/src/main/assets/frost.pck` | 约 177 MB | Git LFS |
 | `MEFrostJava/app/libs/MatrixSdk_Integrated_1.3.1.aar` | 约 22 MB | Git LFS |
 | `MEFrostJava/app/src/main/jniLibs/arm64-v8a/*.so` | 约 7 MB | 普通 Git 对象 |
 
@@ -78,7 +78,7 @@ setup.bat
 
 ```text
 [INFO] Checking bundled Android project files...
-[ OK ] Bundled AAR, game.pck and native libraries are ready
+[ OK ] Bundled AAR, frost.pck and native libraries are ready
 [INFO] Checking the bundled Gradle 8.4 wrapper...
 [ OK ] Gradle wrapper 8.4 ready
 [INFO] Resolving JDK 17+...
@@ -218,7 +218,7 @@ java -classpath gradle/wrapper/gradle-wrapper.jar org.gradle.wrapper.GradleWrapp
 
 | 现象 | 原因 | 处理 |
 | --- | --- | --- |
-| `game.pck not found` | LFS 对象未拉取 | `git lfs pull` |
+| `frost.pck not found` | LFS 对象未拉取 | `git lfs pull` |
 | `MatrixSdk AAR not found` | LFS 对象未拉取 | `git lfs pull` |
 | `Android NDK 29.0.14206865 not found` | NDK 未安装 | 运行 `setup.bat`，或 `sdkmanager "ndk;29.0.14206865"` |
 | `JAVA_HOME is not set to a JDK` | 未配置 JDK | 运行 `setup.bat`，或手动设置 `JAVA_HOME` |

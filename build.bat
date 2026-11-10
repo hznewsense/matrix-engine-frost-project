@@ -4,7 +4,7 @@ setlocal EnableExtensions EnableDelayedExpansion
 REM ============================================================
 REM Matrix Engine Frost Project - APK Build
 REM 单 APK 流水线: Gradle 组装 -> 产物归位到 Apks\
-REM 引擎 AAR / game.pck / 原生库都已随仓库提供, 脚本不再编译或导出.
+REM 引擎 AAR / frost.pck / 原生库都已随仓库提供, 脚本不再编译或导出.
 REM ============================================================
 
 for /F "delims=" %%E in ('echo prompt $E^| cmd') do set "ESC=%%E"
@@ -262,8 +262,8 @@ call :log_error "Gradle wrapper jar not found: %WRAPPER_JAR%"
 exit /b 1
 
 :require_project_assets
-if not exist "%APP_DIR%\src\main\assets\game.pck" (
-    call :log_error "game.pck not found: %APP_DIR%\src\main\assets\game.pck"
+if not exist "%APP_DIR%\src\main\assets\frost.pck" (
+    call :log_error "frost.pck not found: %APP_DIR%\src\main\assets\frost.pck"
     call :log_error "It is stored with Git LFS. Restore it with: git lfs pull"
     exit /b 1
 )
@@ -320,8 +320,8 @@ exit /b 1
 
 :verify_apk_payload_ok
 if %~2 GTR 52428800 exit /b 0
-call :log_error "APK is only %~2 bytes -- game.pck or the native libraries are missing."
-call :log_error "Check MEFrostJava/app/src/main/assets/game.pck and MEFrostJava/app/src/main/jniLibs/arm64-v8a."
+call :log_error "APK is only %~2 bytes -- frost.pck or the native libraries are missing."
+call :log_error "Check MEFrostJava/app/src/main/assets/frost.pck and MEFrostJava/app/src/main/jniLibs/arm64-v8a."
 exit /b 1
 
 :copy_file_retry

@@ -40,7 +40,7 @@ HMI 叠层 UI 与内置浏览器页面，可作为车机项目的 HMI Starter Ki
 
 MEFrost 主要用于以下场景：
 
-- **单 APK 集成参考**：不区分服务端与客户端 APK，引擎运行时、业务 `.so` 与 `game.pck` 全部打进同一个应用。
+- **单 APK 集成参考**：不区分服务端与客户端 APK，引擎运行时、业务 `.so` 与 `frost.pck` 全部打进同一个应用。
 - **Render as Service 落地样例**：应用进程通过 `MatrixService` 前台服务持有引擎实例，UI 侧只负责挂载 Surface。
 - **C++ 业务扩展参考**：通过 GDExtension 接入 C++ 模块，便于后续对接车身信号、通信链路与高性能业务逻辑。
 - **性能基线**：以固定分辨率 / 帧率输出，可作为渲染、内存、CPU/GPU 占用的对照工程。
@@ -53,7 +53,7 @@ MEFrost 主要用于以下场景：
 - **镜头系统**：预设机位漫游、车内外视角切换，由 C++ 扩展侧驱动。
 - **HMI 叠层**：温度、车速等状态叠层 UI，与渲染画面独立更新。
 - **内置 Web 页**：WebView 承载车型说明页面，横屏全屏展示。
-- **单 APK 交付**：首次启动自动把 `assets/game.pck` 安装到应用私有目录，无需外置 OBB 安装流程。
+- **单 APK 交付**：首次启动自动把 `assets/frost.pck` 安装到应用私有目录，无需外置 OBB 安装流程。
 - **横屏常亮**：`MainActivity` 固定横屏、隐藏系统栏并保持屏幕常亮，符合车机使用习惯。
 
 ---
@@ -90,7 +90,7 @@ sequenceDiagram
     participant Eng as Matrix Engine
 
     Boot->>App: onCreate()
-    App->>App: PCKManager 安装 assets/game.pck
+    App->>App: PCKManager 安装 assets/frost.pck
     App->>Svc: 启动并绑定前台服务
     Svc->>Eng: 创建引擎实例（加载 AAR 内原生库）
     Act->>App: 请求引擎客户端
@@ -142,7 +142,7 @@ sequenceDiagram
 │           │   ├── MainActivity.java
 │           │   └── BrowserActivity.java
 │           ├── res/                    # 图标、主题、布局
-│           ├── assets/game.pck         # 游戏内容包（Git LFS）
+│           ├── assets/frost.pck        # 游戏内容包（Git LFS）
 │           └── jniLibs/arm64-v8a/
 │               ├── libMEFrost.android.template_release.arm64.so
 │               └── libzmq.so
@@ -211,7 +211,7 @@ adb shell am start -W -n com.ns.mefrost/com.ns.mefrost.MainActivity
 
 | 产物 | 路径 | 说明 |
 | --- | --- | --- |
-| APK | `Apks/MEFrost_<版本>_<git>_<variant>.apk` | 单 APK，含引擎、业务 `.so` 与 `game.pck` |
+| APK | `Apks/MEFrost_<版本>_<git>_<variant>.apk` | 单 APK，含引擎、业务 `.so` 与 `frost.pck` |
 
 命名规则：
 
@@ -266,7 +266,7 @@ adb shell am start -W -n com.ns.mefrost/com.ns.mefrost.MainActivity
 3. 替换 `res/drawable/icon_hmi.png` 与 `mipmap-*` 下的启动图标；
 4. 替换 `res/values/strings.xml` 中的 `app_name`；
 5. 替换 `MEFrostJava/app/libs/MatrixSdk_Integrated_*.aar` 与 `jniLibs/` 下的业务 `.so`；
-6. 用自研内容替换 `assets/game.pck`。
+6. 用自研内容替换 `assets/frost.pck`。
 
 ---
 
@@ -274,8 +274,8 @@ adb shell am start -W -n com.ns.mefrost/com.ns.mefrost.MainActivity
 
 ### 内容侧
 
-`game.pck` 由 Matrix Engine 编辑器导出。替换内容后重新导出并覆盖
-`MEFrostJava/app/src/main/assets/game.pck` 即可，无需改动 Java 侧代码。
+`frost.pck` 由 Matrix Engine 编辑器导出。替换内容后重新导出并覆盖
+`MEFrostJava/app/src/main/assets/frost.pck` 即可，无需改动 Java 侧代码。
 
 ### 原生扩展侧
 
@@ -302,7 +302,7 @@ GDExtension 扩展。重新编译后覆盖该文件即可；引擎侧的依赖�
 
 | 现象 | 原因 | 处理 |
 | --- | --- | --- |
-| `game.pck not found` / `MatrixSdk AAR not found` | LFS 对象未拉取 | `git lfs pull` |
+| `frost.pck not found` / `MatrixSdk AAR not found` | LFS 对象未拉取 | `git lfs pull` |
 | `Android NDK ... not found` | NDK 未安装 | 运行 `setup.bat` |
 | APK 体积数百 MB | 原生库未被 strip | 确认 `ANDROID_NDK_ROOT` 后 `build.bat --clean-host` |
 | APK 只有几 MB | PCK / 原生库未打入 | 检查 `assets/` 与 `jniLibs/arm64-v8a/` |
@@ -332,5 +332,5 @@ GDExtension 扩展。重新编译后覆盖该文件即可；引擎侧的依赖�
 
 ## 技术依赖说明
 
-Matrix Engine 基于 Godot 技术栈深度定制。`GDExtension`、`game.pck`、`godot_android` 等名称属于底层
+Matrix Engine 基于 Godot 技术栈深度定制。`GDExtension`、`PCK`、`godot_android` 等名称属于底层
 构建与运行依赖，保留这些术语是为了保证工程、资源和 SDK 接入说明的准确性。

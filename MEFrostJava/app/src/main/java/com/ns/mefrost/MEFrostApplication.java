@@ -47,7 +47,7 @@ public class MEFrostApplication extends Application {
         }
     }
 
-    // 从外部文件目录安装 PCK: assets/game.pck 会被复制成 files/game.obb 后按主包加载.
+    // 从外部文件目录安装 PCK: assets/frost.pck 会被复制成 files/game.obb 后按主包加载.
     private void initializePckWithSmartLoading() {
         File externalDir = getExternalFilesDir(null);
         if (externalDir == null) {
@@ -62,15 +62,15 @@ public class MEFrostApplication extends Application {
             File installedFile = new File(installedPath);
             byte[] bundledHash;
             byte[] installedHash;
-            try (InputStream bundled = getAssets().open("game.pck");
+            try (InputStream bundled = getAssets().open("frost.pck");
                  InputStream installed = new FileInputStream(installedFile)) {
                 bundledHash = sha256(bundled);
                 installedHash = sha256(installed);
             }
             if (!MessageDigest.isEqual(bundledHash, installedHash)) {
-                File temp = File.createTempFile("game-", ".pck", installedFile.getParentFile());
+                File temp = File.createTempFile("frost-", ".pck", installedFile.getParentFile());
                 try {
-                    try (InputStream bundled = getAssets().open("game.pck")) {
+                    try (InputStream bundled = getAssets().open("frost.pck")) {
                         Files.copy(bundled, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     }
                     byte[] copiedHash;
