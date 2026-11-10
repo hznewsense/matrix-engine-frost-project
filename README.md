@@ -13,16 +13,22 @@ C++ 业务扩展与游戏内容打包成**单个 Android APK**，以 Render as S
 工程面向车载横屏（2560×1440 @ 30fps）场景，包含 3D 车模展示、车漆/材质切换、车内外镜头漫游、
 HMI 叠层 UI 与内置浏览器页面，可作为车机项目的 HMI Starter Kit 与性能基线。
 
+<div align="center">
+  <img alt="MEFrost 主场景" src="./Docs/images/main-scene.png" width="80%">
+</div>
+
 ---
 
 ## 目录
 
 - [项目定位](#项目定位)
 - [核心特性](#核心特性)
+- [运行效果](#运行效果)
 - [架构说明](#架构说明)
 - [仓库结构](#仓库结构)
 - [快速上手](#快速上手)
 - [构建产物](#构建产物)
+- [性能数据](#性能数据)
 - [应用身份与版本](#应用身份与版本)
 - [二次开发](#二次开发)
 - [常见问题](#常见问题)
@@ -49,6 +55,25 @@ MEFrost 主要用于以下场景：
 - **内置 Web 页**：WebView 承载车型说明页面，横屏全屏展示。
 - **单 APK 交付**：首次启动自动把 `assets/game.pck` 安装到应用私有目录，无需外置 OBB 安装流程。
 - **横屏常亮**：`MainActivity` 固定横屏、隐藏系统栏并保持屏幕常亮，符合车机使用习惯。
+
+---
+
+## 运行效果
+
+以下截图取自 Snapdragon 8295 车机实机运行。
+
+<table>
+  <tr>
+    <td width="50%">
+      <img alt="3D Launcher 主场景" src="./Docs/images/main-scene.png">
+      <p align="center">3D Launcher 主场景</p>
+    </td>
+    <td width="50%">
+      <img alt="SR 场景" src="./Docs/images/sr-scene.png">
+      <p align="center">SR 场景</p>
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -121,6 +146,7 @@ sequenceDiagram
 │           ├── libMEFrost.android.template_release.arm64.so
 │           └── libzmq.so
 │
+├── Docs/                               # 性能数据与运行截图
 ├── Apks/                               # 构建产物输出目录
 ├── setup.bat                           # 环境准备
 ├── build.bat                           # APK 构建
@@ -195,6 +221,22 @@ adb shell am start -W -n com.ns.mefrost/com.ns.mefrost.MainActivity
 | 变体 | `release` | 构建类型 |
 
 默认使用 Android 调试证书签名。正式分发前的注意事项见 [QuickStart.md](QuickStart.md#4-自定义应用身份)。
+
+---
+
+## 性能数据
+
+以下数据在 Snapdragon 8295 车机上以 2560×1440 @ 30fps 采集，引擎版本 Matrix 1.3.1。
+
+| 场景 | 平均帧率 | CPU（单核%） | CPU（KMIPS） | GPU（%） | GPU（Gflops） | PSS（MB） | 包体（MB） | 首次启动（s） | 一般启动（s） |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 3D Launcher | 30 | 11.80 | 3.25 | 38.82 | 1164.60 | 446.15 | 90.00 | 4 | 4 |
+| SR | 30 | 16.73 | 4.60 | 23.01 | 690.30 | 462.93 | 90.00 | 4 | 4 |
+
+完整数据（含原始工作簿）见 [`Docs/Matrix-1.3.1-MEFrost-261030性能.md`](Docs/Matrix-1.3.1-MEFrost-261030性能.md)
+与 [`Docs/Matrix-1.3.1-MEFrost-261030性能.xlsx`](Docs/Matrix-1.3.1-MEFrost-261030性能.xlsx)。
+
+> 表中的包体为 90 MB，是本工程对外发布时的配置；仓库内 `build.bat` 默认产物约 108 MB。
 
 ---
 
