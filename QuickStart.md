@@ -46,7 +46,7 @@ adb shell am start -W -n com.ns.mefrost/com.ns.mefrost.MainActivity
 | Android SDK | compileSdk 36 | 否，`setup.bat` 自动检测或安装 |
 | Android Build Tools | 36.1.0 | 否，`setup.bat` 自动安装 |
 | Android NDK | 29.0.14206865 | 否，`setup.bat` 自动安装 |
-| Gradle | 8.4 | 是，`MEFrostJava/host/gradle/wrapper/` |
+| Gradle | 8.4 | 是，`MEFrostAndroid/host/gradle/wrapper/` |
 | Android Gradle Plugin | 8.3.0 | 否，Gradle 自动下载 |
 | Git LFS | 任意 | 是（用于 PCK / AAR 拉取） |
 
@@ -64,9 +64,9 @@ git lfs pull
 
 | 文件 | 大小 | 存储方式 |
 | --- | --- | --- |
-| `MEFrostJava/app/src/main/assets/frost.pck` | 约 177 MB | Git LFS |
-| `MEFrostJava/app/libs/MatrixSdk_Integrated_1.3.1.aar` | 约 22 MB | Git LFS |
-| `MEFrostJava/app/src/main/jniLibs/arm64-v8a/*.so` | 约 7 MB | 普通 Git 对象 |
+| `MEFrostAndroid/app/src/main/assets/frost.pck` | 约 177 MB | Git LFS |
+| `MEFrostAndroid/app/libs/MatrixSdk_Integrated_1.3.1.aar` | 约 22 MB | Git LFS |
+| `MEFrostAndroid/app/src/main/jniLibs/arm64-v8a/*.so` | 约 7 MB | 普通 Git 对象 |
 
 ## 2. 配置环境
 
@@ -129,7 +129,7 @@ build.bat
   ANDROID_SDK_ROOT  = D:\Android\Sdk
   ANDROID_NDK_ROOT  = D:\Android\Sdk\ndk\29.0.14206865
   JAVA_HOME         = C:\Program Files\Microsoft\jdk-17.0.20.101-hotspot\
-  GRADLE_WRAPPER    = ...\MEFrostJava\host\gradle\wrapper\gradle-wrapper.jar
+  GRADLE_WRAPPER    = ...\MEFrostAndroid\host\gradle\wrapper\gradle-wrapper.jar
 ```
 
 随后完成：
@@ -178,10 +178,10 @@ build.bat --all
 
 ## 4. 自定义应用身份
 
-`MEFrostJava/app/build.gradle` 的所有构建参数都有默认值，可用 `-P` 覆盖。直接调 Gradle 时：
+`MEFrostAndroid/app/build.gradle` 的所有构建参数都有默认值，可用 `-P` 覆盖。直接调 Gradle 时：
 
 ```bat
-cd MEFrostJava\host
+cd MEFrostAndroid\host
 java -classpath gradle/wrapper/gradle-wrapper.jar org.gradle.wrapper.GradleWrapperMain ^
   -Pexport_package_name=com.example.frost ^
   -Pexport_version_name=1.2.0 ^
@@ -200,19 +200,19 @@ java -classpath gradle/wrapper/gradle-wrapper.jar org.gradle.wrapper.GradleWrapp
 | `export_ndk_version` | `29.0.14206865` | 必须固定，否则 AGP 静默跳过 strip |
 | `export_enabled_abis` | `arm64-v8a` | 只支持 arm64，其它值会抛异常 |
 
-修改 `export_package_name` 时，同时改 `MEFrostJava/app/build.gradle` 里的 `namespace`，并检查
+修改 `export_package_name` 时，同时改 `MEFrostAndroid/app/build.gradle` 里的 `namespace`，并检查
 `AndroidManifest.xml` 中 `<queries>` 声明的包名。
 
 ## 5. 用 Android Studio 打开
 
-仓库是标准 Gradle 工程，可直接打开 `MEFrostJava/host/settings.gradle` 所在的目录：
+仓库是标准 Gradle 工程，可直接打开 `MEFrostAndroid/host/settings.gradle` 所在的目录：
 
-1. Android Studio → Open → 选择 `MEFrostJava/host/` 目录；
+1. Android Studio → Open → 选择 `MEFrostAndroid/host/` 目录；
 2. 等待 Gradle 同步（会自动下载 AGP 8.3.0 与依赖）；
 3. 选择 `app` 配置后直接 Run。
 
 注意 `settings.gradle` 通过相对路径把 `../app` 注册为 `:app` 模块，因此**必须打开
-`MEFrostJava/host/`**，不能直接打开仓库根目录。
+`MEFrostAndroid/host/`**，不能直接打开仓库根目录。
 
 ## 6. 常见问题
 
@@ -223,7 +223,7 @@ java -classpath gradle/wrapper/gradle-wrapper.jar org.gradle.wrapper.GradleWrapp
 | `Android NDK 29.0.14206865 not found` | NDK 未安装 | 运行 `setup.bat`，或 `sdkmanager "ndk;29.0.14206865"` |
 | `JAVA_HOME is not set to a JDK` | 未配置 JDK | 运行 `setup.bat`，或手动设置 `JAVA_HOME` |
 | APK 体积数百 MB | 原生库未被 strip | 确认 `ANDROID_NDK_ROOT` 存在后 `build.bat --clean-host` |
-| APK 只有几 MB | PCK / 原生库未打入 | 检查 `MEFrostJava/app/src/main/assets/` 与 `MEFrostJava/app/src/main/jniLibs/arm64-v8a/` |
+| APK 只有几 MB | PCK / 原生库未打入 | 检查 `MEFrostAndroid/app/src/main/assets/` 与 `MEFrostAndroid/app/src/main/jniLibs/arm64-v8a/` |
 | Gradle 卡在下载 Gradle 8.4 | 网络受限 | wrapper 指向腾讯云镜像，可改 `gradle-wrapper.properties` |
 | 应用启动后黑屏 | PCK 校验失败或原生库未加载 | `adb logcat \| findstr MEFrost` |
 | `lintVital` 报 Kotlin 元数据版本不兼容 | 已知告警，不影响产物 | 可忽略，或升级 Gradle/AGP |

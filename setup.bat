@@ -15,7 +15,7 @@ set "COLOR_GREEN=%ESC%[92m"
 set "COLOR_CYAN=%ESC%[96m"
 
 REM ---------- Toolchain targets ----------
-REM 与 MEFrostJava/app/build.gradle 的默认值保持一致.
+REM 与 MEFrostAndroid/app/build.gradle 的默认值保持一致.
 set "NDK_VERSION=29.0.14206865"
 set "GRADLE_VERSION=8.4"
 set "ANDROID_COMPILE_SDK=36"
@@ -25,7 +25,7 @@ REM ---------- Paths ----------
 set "REPO_ROOT=%~dp0"
 if "%REPO_ROOT:~-1%"=="\" set "REPO_ROOT=%REPO_ROOT:~0,-1%"
 set "USER_ENV_FILE=%REPO_ROOT%\.setup-user-env.cmd"
-set "ANDROID_DIR=%REPO_ROOT%\MEFrostJava"
+set "ANDROID_DIR=%REPO_ROOT%\MEFrostAndroid"
 set "HOST_DIR=%ANDROID_DIR%\host"
 set "APP_DIR=%ANDROID_DIR%\app"
 

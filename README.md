@@ -123,7 +123,7 @@ sequenceDiagram
 
 ```text
 .
-├── MEFrostJava/                        # Android 工程
+├── MEFrostAndroid/                        # Android 工程
 │   ├── host/                           # Gradle 根工程
 │   │   ├── settings.gradle             # 声明 :app 指向 ../app
 │   │   ├── build.gradle                # 仓库配置
@@ -202,7 +202,7 @@ adb shell am start -W -n com.ns.mefrost/com.ns.mefrost.MainActivity
 
 ### 用 Android Studio 打开
 
-打开 `MEFrostJava/host/` 目录（不是仓库根目录）——`settings.gradle` 用相对路径把 `../app` 注册为
+打开 `MEFrostAndroid/host/` 目录（不是仓库根目录）——`settings.gradle` 用相对路径把 `../app` 注册为
 `:app` 模块。
 
 ---
@@ -246,7 +246,7 @@ adb shell am start -W -n com.ns.mefrost/com.ns.mefrost.MainActivity
 
 默认应用 ID 为 `com.ns.mefrost`，入口 Activity 为 `com.ns.mefrost.MainActivity`。
 
-`MEFrostJava/app/build.gradle` 的所有构建参数都可以用 `-P` 覆盖：
+`MEFrostAndroid/app/build.gradle` 的所有构建参数都可以用 `-P` 覆盖：
 
 | 属性 | 默认值 |
 | --- | --- |
@@ -261,11 +261,11 @@ adb shell am start -W -n com.ns.mefrost/com.ns.mefrost.MainActivity
 
 品牌化替换清单：
 
-1. `export_package_name` 与 `MEFrostJava/app/build.gradle` 的 `namespace` 同步修改；
+1. `export_package_name` 与 `MEFrostAndroid/app/build.gradle` 的 `namespace` 同步修改；
 2. `AndroidManifest.xml` 中 `<queries>` 的包名同步修改；
 3. 替换 `res/drawable/icon_hmi.png` 与 `mipmap-*` 下的启动图标；
 4. 替换 `res/values/strings.xml` 中的 `app_name`；
-5. 替换 `MEFrostJava/app/libs/MatrixSdk_Integrated_*.aar` 与 `jniLibs/` 下的业务 `.so`；
+5. 替换 `MEFrostAndroid/app/libs/MatrixSdk_Integrated_*.aar` 与 `jniLibs/` 下的业务 `.so`；
 6. 用自研内容替换 `assets/frost.pck`。
 
 ---
@@ -275,11 +275,11 @@ adb shell am start -W -n com.ns.mefrost/com.ns.mefrost.MainActivity
 ### 内容侧
 
 `frost.pck` 由 Matrix Engine 编辑器导出。替换内容后重新导出并覆盖
-`MEFrostJava/app/src/main/assets/frost.pck` 即可，无需改动 Java 侧代码。
+`MEFrostAndroid/app/src/main/assets/frost.pck` 即可，无需改动 Java 侧代码。
 
 ### 原生扩展侧
 
-`MEFrostJava/app/src/main/jniLibs/arm64-v8a/libMEFrost.android.template_release.arm64.so` 是项目的
+`MEFrostAndroid/app/src/main/jniLibs/arm64-v8a/libMEFrost.android.template_release.arm64.so` 是项目的
 GDExtension 扩展。重新编译后覆盖该文件即可；引擎侧的依赖（`libgodot_android.so`、`libc++_shared.so`）
 由 AAR 提供，`libzmq.so` 为业务通信依赖，也需要一并更新。
 
